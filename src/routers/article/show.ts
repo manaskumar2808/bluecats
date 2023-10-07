@@ -11,7 +11,7 @@ Route.get('/api/article/:title', async (req: Request, res: Response, next: NextF
         const encodedTitle = params?.title as string;
         const title = decodeURIComponent(encodedTitle);
 
-        let article = await Article.findOne({ title });
+        let article = await Article.findOne({ title }).populate('author');
 
         if(article)
             article.image = getModifiedImageURL(article?.image);
