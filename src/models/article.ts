@@ -34,6 +34,7 @@ const ArticleSchema = new mongoose.Schema({
     },
     author: {
         type: String,
+        ref: 'User',
         required: true,
     },
 }, {

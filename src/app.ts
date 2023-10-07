@@ -13,6 +13,8 @@ import { GalleryRoute } from './routers/gallery';
 import { GetArticlesRoute } from './routers/article';
 import { GetArticleRoute } from './routers/article/show';
 import { PostArticleRoute } from './routers/article/post';
+import { LoginRoute } from './routers/auth/login';
+import { SignupRoute } from './routers/auth/signup';
 
 const app = Express();
 
@@ -42,6 +44,9 @@ const upload = multer({ storage }).single('file');
 
 app.use(upload);
 app.use('/uploads', Express.static(path.join(__dirname, 'uploads')));
+
+app.use(LoginRoute);
+app.use(SignupRoute);
 
 app.use(GalleryRoute);
 app.use(GetArticlesRoute);

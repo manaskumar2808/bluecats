@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 interface UserAttr {
+    userName: string;
     email: string;
     phone: string;
     name: string;
@@ -13,6 +14,7 @@ interface UserModel extends mongoose.Model<UserDoc> {
 }
 
 interface UserDoc extends mongoose.Document {
+    userName: string;
     email: string;
     phone: string;
     name: string;
@@ -21,6 +23,10 @@ interface UserDoc extends mongoose.Document {
 }
 
 const userSchema = new mongoose.Schema({
+    userName: {
+        type: String,
+        required: true,
+    },
     email: {
         type: String,
         required: false,

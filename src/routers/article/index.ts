@@ -7,7 +7,7 @@ const Route = Express.Router();
 
 Route.get('/api/article/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const articles = await Article.find();
+        const articles = await Article.find().populate('author');
 
         for(let article of articles) {
             article.image = getModifiedImageURL(article?.image);
