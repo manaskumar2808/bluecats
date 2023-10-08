@@ -5,9 +5,16 @@ import { getModifiedImageURL } from "../../utility/image";
 
 const Route = Express.Router();
 
+// /api/article?user=[userId]
 Route.get('/api/article/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const articles = await Article.find().populate('author');
+        const userId = req?.query?.user as string;
+        
+        let articles = [];
+        if(userId)
+            articles = await Article.find({ author: userId }).populate('author');
+        else
+            articles = await Article.find().populate('author');
 
         for(let article of articles) {
             article.image = getModifiedImageURL(article?.image);
