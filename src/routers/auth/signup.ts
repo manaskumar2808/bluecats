@@ -4,12 +4,14 @@ import { hash } from 'bcryptjs';
 import { StatusCode } from '../../constants/status';
 import { UserNameAlreadyOccupiedException } from '../../exceptions/username-occupied';
 import { getJWTPayload } from '../../utility/jwt';
+import { SignupValidator } from '../../validators/auth';
+import { validateRequest } from '../../middlewares/validate-request';
 
 const Router = Express.Router();
 
-Router.post('/api/auth/signup', async (req: Request, res: Response, next: NextFunction) => {
+Router.post('/api/auth/signup', SignupValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userName, firstName, lastName, phone, email, image, password } = req?.body;
+        const { userName, firstName, lastName, phone, email, image, rand, password } = req?.body;
 
         const existingUser = await User.findOne({ userName });
         if(existingUser)
@@ -27,7 +29,7 @@ Router.post('/api/auth/signup', async (req: Request, res: Response, next: NextFu
                 name += lastName;
         }
 
-        const user = User.build({ userName, name, password: encodedPassword, phone, email, image });
+        const user = User.build({ userName, name, password: encodedPassword, phone, email, image, rand });
         await user.save();
 
         const { token, expiryDate } = getJWTPayload(user);

@@ -29,7 +29,6 @@ const ArticleSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        ref: 'Gallery',
         required: false,
     },
     author: {

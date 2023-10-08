@@ -6,10 +6,12 @@ import jwt from 'jsonwebtoken';
 import { InvalidPasswordException } from '../../exceptions/invalid-password';
 import { StatusCode } from '../../constants/status';
 import { getJWTPayload } from '../../utility/jwt';
+import { LoginValidator } from '../../validators/auth';
+import { validateRequest } from '../../middlewares/validate-request';
 
 const Router = Express.Router();
 
-Router.post('/api/auth/login', async (req: Request, res: Response, next: NextFunction) => {
+Router.post('/api/auth/login', LoginValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userName, password } = req?.body;
 

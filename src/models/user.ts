@@ -6,7 +6,8 @@ interface UserAttr {
     phone: string;
     name: string;
     password: string;
-    image: string;
+    image?: string;
+    rand?: number;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -19,7 +20,8 @@ interface UserDoc extends mongoose.Document {
     phone: string;
     name: string;
     password: string;
-    image: string;
+    image?: string;
+    rand?: number;
 }
 
 const userSchema = new mongoose.Schema({
@@ -45,8 +47,12 @@ const userSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        ref: 'Gallery',
         required: false,
+    },
+    rand: {
+        type: String,
+        required: false,
+        default: 0,
     },
 }, {
     toJSON: {

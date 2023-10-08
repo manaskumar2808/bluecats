@@ -15,6 +15,9 @@ import { GetArticleRoute } from './routers/article/show';
 import { PostArticleRoute } from './routers/article/post';
 import { LoginRoute } from './routers/auth/login';
 import { SignupRoute } from './routers/auth/signup';
+import { UserShowRoute } from './routers/user/show';
+import { UserUpdateRoute } from './routers/user/update';
+import { UserPasswordRoute } from './routers/user/password';
 
 const app = Express();
 
@@ -52,6 +55,10 @@ app.use(GalleryRoute);
 app.use(GetArticlesRoute);
 app.use(GetArticleRoute);
 app.use(PostArticleRoute);
+
+app.use(UserShowRoute);
+app.use(UserUpdateRoute);
+app.use(UserPasswordRoute);
 
 app.all('*', PageNotFound);
 app.use(BadRequest);

@@ -6,12 +6,14 @@ import { Article } from "../../models/article";
 import { Multer } from 'multer';
 import { uploadFile } from '../../../s3';
 import { getModifiedImageURL } from '../../utility/image';
+import { ArticleValidator } from '../../validators/article';
+import { validateRequest } from '../../middlewares/validate-request';
 
 const Route = express.Router();
 
 const unlink = util.promisify(fs.unlink);
 
-Route.post('/api/article/', async (req: Request, res: Response, next: NextFunction) => {
+Route.post('/api/article/', ArticleValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { title, content, image, author } = req?.body || {};
 
