@@ -3,10 +3,12 @@ import { User } from '../../models/user';
 import { StatusCode } from '../../constants/status';
 import { UserNameAlreadyOccupiedException } from '../../exceptions/username-occupied';
 import { UserNotFoundException } from '../../exceptions/user-not-found';
+import authMiddlware from '../../middlewares/auth-middleware';
+import requireAuth from '../../middlewares/require-auth';
 
 const Router = Express.Router();
 
-Router.put('/api/user/:id', async (req: Request, res: Response, next: NextFunction) => {
+Router.put('/api/user/:id', authMiddlware, requireAuth, async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req?.params?.id as string;
 
