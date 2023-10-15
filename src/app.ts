@@ -3,6 +3,8 @@ import path from 'path';
 import { json, urlencoded } from 'body-parser';
 import cors from 'cors';
 import multer, { diskStorage } from 'multer';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
 
 import { PageNotFound } from './routers/error/page-not-found';
 import { BadRequest } from './routers/error/bad-request';
@@ -18,13 +20,23 @@ import { SignupRoute } from './routers/auth/signup';
 import { UserShowRoute } from './routers/user/show';
 import { UserUpdateRoute } from './routers/user/update';
 import { UserPasswordRoute } from './routers/user/password';
+import { DeleteArticleRoute } from './routers/article/delete';
 
 const app = Express();
 
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
+app.use(cookieParser());
 app.set('trust proxy', true);
+
+app.use(session({
+    secret: 'keyboardcat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+}));
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -55,6 +67,7 @@ app.use(GalleryRoute);
 app.use(GetArticlesRoute);
 app.use(GetArticleRoute);
 app.use(PostArticleRoute);
+app.use(DeleteArticleRoute);
 
 app.use(UserShowRoute);
 app.use(UserUpdateRoute);

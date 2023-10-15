@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
+import { ArticleMode } from '../constants/article';
 
 interface ArticleAttr {
-    title: string;
-    content: string;
+    title?: string;
+    content?: string;
     author: string;
     image?: string;
+    mode?: string;
 }
 
 interface ArticleModel extends mongoose.Model<ArticleDoc> {
@@ -12,16 +14,17 @@ interface ArticleModel extends mongoose.Model<ArticleDoc> {
 }
 
 interface ArticleDoc extends mongoose.Document {
-    title: string;
-    content: string;
+    title?: string;
+    content?: string;
     author: string;
     image?: string;
+    mode?: string;
 }
 
 const ArticleSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true,
+        required: false,
     },
     content: {
         type: String,
@@ -35,6 +38,11 @@ const ArticleSchema = new mongoose.Schema({
         type: String,
         ref: 'User',
         required: true,
+    },
+    mode: {
+        type: String,
+        required: true,
+        default: ArticleMode.PUBLISHED,
     },
 }, {
     toJSON: {
