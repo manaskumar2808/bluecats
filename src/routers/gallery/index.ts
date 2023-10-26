@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import { getFileStream } from '../../../s3';
 
 const Router = express.Router();

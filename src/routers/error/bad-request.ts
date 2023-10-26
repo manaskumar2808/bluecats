@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCode } from "../../constants/status";
 
 const Route = (err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.log('bad request error', err);
+
     if(err instanceof SyntaxError) {
         return res.status(StatusCode.BAD_REQUEST).send({
             error: err?.message || 'Bad request: invalid JSON!',
