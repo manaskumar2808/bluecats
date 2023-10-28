@@ -3,7 +3,7 @@ import { ArticleMode } from '../constants/article';
 
 interface ArticleAttr {
     title?: string;
-    content?: string;
+    segments: string[];
     author: string;
     image?: string;
     mode?: string;
@@ -15,7 +15,7 @@ interface ArticleModel extends mongoose.Model<ArticleDoc> {
 
 interface ArticleDoc extends mongoose.Document {
     title?: string;
-    content?: string;
+    segments: string[];
     author: string;
     image?: string;
     mode?: string;
@@ -26,10 +26,11 @@ const ArticleSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-    content: {
+    segments: [{
         type: String,
+        ref: 'Segment',
         required: false,
-    },
+    }],
     image: {
         type: String,
         required: false,

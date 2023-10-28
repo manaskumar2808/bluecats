@@ -21,6 +21,8 @@ import { UserShowRoute } from './routers/user/show';
 import { UserUpdateRoute } from './routers/user/update';
 import { UserPasswordRoute } from './routers/user/password';
 import { DeleteArticleRoute } from './routers/article/delete';
+import { DeleteSegmentRoute } from './routers/segment/delete';
+import { PostSegmentRoute } from './routers/segment/post';
 
 const app = Express();
 
@@ -36,7 +38,6 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: true }
 }));
-
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -55,7 +56,7 @@ const storage = diskStorage({
     },
 });
 
-const upload = multer({ storage }).single('file');
+const upload = multer({ storage, limits: { fieldSize: 25 * 1024 * 1024 } }).single('file');
 
 app.use(upload);
 app.use('/uploads', Express.static(path.join(__dirname, 'uploads')));
@@ -68,6 +69,9 @@ app.use(GetArticlesRoute);
 app.use(GetArticleRoute);
 app.use(PostArticleRoute);
 app.use(DeleteArticleRoute);
+
+app.use(PostSegmentRoute);
+app.use(DeleteSegmentRoute);
 
 app.use(UserShowRoute);
 app.use(UserUpdateRoute);

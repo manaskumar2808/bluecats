@@ -14,7 +14,7 @@ Route.get('/api/article/:title', async (req: Request, res: Response, next: NextF
         const encodedTitle = params?.title as string;
         const title = decodeURIComponent(encodedTitle);
 
-        let article = await Article.findOne({ title }).populate('author');
+        let article = await Article.findOne({ title }).populate('author').populate('segments');
 
         if(!article)
             throw new ArticleNotFoundException();
@@ -37,7 +37,7 @@ Route.get('/api/draft/:id', authMiddlware, requireAuth, async (req: Request, res
     try {
         const id = req?.params?.id;
 
-        let article = await Article.findById(id).populate('author');
+        let article = await Article.findById(id).populate('author').populate('segments');
 
         if(!article)
             throw new ArticleNotFoundException();
