@@ -10,7 +10,6 @@ import { validateRequest } from '../../middlewares/validate-request';
 import { ArticleMode } from '../../constants/article';
 import authMiddlware from '../../middlewares/auth-middleware';
 import requireAuth from '../../middlewares/require-auth';
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 const Route = express.Router();
 
@@ -18,10 +17,10 @@ const unlink = util.promisify(fs.unlink);
 
 Route.post('/api/article/', authMiddlware, requireAuth, ArticleValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { title, content, image, id } = req?.body || {};
+        const { title, segments: strSegments, image, id } = req?.body || {};
 
         if(id) {
-            const article = await Article.findById(id)?.populate('author');
+            const article = await Article.findById(id)?.populate('author').populate('segments');
             article?.set({
                 mode: ArticleMode.PUBLISHED,
             });
@@ -46,8 +45,9 @@ Route.post('/api/article/', authMiddlware, requireAuth, ArticleValidator, valida
         }
 
         const url = imageUrl || image;
+        const segments = JSON.parse(strSegments);
 
-        let article = Article.build({ title, content, image: url, author: req?.uid as string, mode: ArticleMode.PUBLISHED });
+        let article = Article.build({ title, segments, image: url, author: req?.uid as string, mode: ArticleMode.PUBLISHED });
         await article?.save();
 
         article.image = getModifiedImageURL(article?.image);
@@ -65,7 +65,7 @@ Route.post('/api/article/', authMiddlware, requireAuth, ArticleValidator, valida
 
 Route.post('/api/draft/', authMiddlware, requireAuth, async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { title, content, image, id } = req?.body || {};
+        const { title, segments: strSegments, image, id } = req?.body || {};
 
         let article;
         
@@ -84,7 +84,9 @@ Route.post('/api/draft/', authMiddlware, requireAuth, async (req: Request, res: 
 
         const url = imageUrl || image;
 
-        const obj = { title, content, image: url, author: req?.uid as string, mode: ArticleMode.DRAFT };
+        const segments = JSON.parse(strSegments);
+
+        const obj = { title, segments, image: url, author: req?.uid as string, mode: ArticleMode.DRAFT };
 
         if(article)
             article.set(obj);
@@ -102,6 +104,7 @@ Route.post('/api/draft/', authMiddlware, requireAuth, async (req: Request, res: 
             }
         });
     } catch(err) {
+        console.log('failing here', err);
         next(err);
     }
 });

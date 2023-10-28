@@ -21,14 +21,14 @@ Route.get('/api/article/', async (req: Request, res: Response, next: NextFunctio
                     { mode: ArticleMode.PUBLISHED },
                     { mode: { $exists: false } },
                 ]
-            }).sort({ 'createdAt': -1 }).populate('author');
+            }).sort({ 'createdAt': -1 }).populate('author').populate('segments');
         else
             articles = await Article.find({
                 $or: [
                     { mode: ArticleMode.PUBLISHED },
                     { mode: { $exists: false } },
                 ],
-            }).sort({ 'createdAt': -1 }).populate('author');
+            }).sort({ 'createdAt': -1 }).populate('author').populate('segments');
 
         for(let article of articles) {
             article.image = getModifiedImageURL(article?.image);
@@ -51,9 +51,9 @@ Route.get('/api/draft/', authMiddlware, requireAuth, async (req: Request, res: R
         
         let articles = [];
         if(userId)
-            articles = await Article.find({ author: userId, mode: ArticleMode.DRAFT }).sort({ 'createdAt': -1 }).populate('author');
+            articles = await Article.find({ author: userId, mode: ArticleMode.DRAFT }).sort({ 'createdAt': -1 }).populate('author').populate('segments');
         else
-            articles = await Article.find({ mode: ArticleMode.DRAFT }).sort({ 'createdAt': -1 }).populate('author');
+            articles = await Article.find({ mode: ArticleMode.DRAFT }).sort({ 'createdAt': -1 }).populate('author').populate('segments');
 
         for(let article of articles) {
             article.image = getModifiedImageURL(article?.image);
