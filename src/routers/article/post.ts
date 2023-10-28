@@ -10,7 +10,6 @@ import { validateRequest } from '../../middlewares/validate-request';
 import { ArticleMode } from '../../constants/article';
 import authMiddlware from '../../middlewares/auth-middleware';
 import requireAuth from '../../middlewares/require-auth';
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 const Route = express.Router();
 
@@ -18,7 +17,7 @@ const unlink = util.promisify(fs.unlink);
 
 Route.post('/api/article/', authMiddlware, requireAuth, ArticleValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { title, segments, image, id } = req?.body || {};
+        const { title, segments: strSegments, image, id } = req?.body || {};
 
         if(id) {
             const article = await Article.findById(id)?.populate('author').populate('segments');
@@ -46,6 +45,7 @@ Route.post('/api/article/', authMiddlware, requireAuth, ArticleValidator, valida
         }
 
         const url = imageUrl || image;
+        const segments = JSON.parse(strSegments);
 
         let article = Article.build({ title, segments, image: url, author: req?.uid as string, mode: ArticleMode.PUBLISHED });
         await article?.save();
@@ -65,7 +65,7 @@ Route.post('/api/article/', authMiddlware, requireAuth, ArticleValidator, valida
 
 Route.post('/api/draft/', authMiddlware, requireAuth, async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { title, segments, image, id } = req?.body || {};
+        const { title, segments: strSegments, image, id } = req?.body || {};
 
         let article;
         
@@ -83,6 +83,8 @@ Route.post('/api/draft/', authMiddlware, requireAuth, async (req: Request, res: 
         }
 
         const url = imageUrl || image;
+
+        const segments = JSON.parse(strSegments);
 
         const obj = { title, segments, image: url, author: req?.uid as string, mode: ArticleMode.DRAFT };
 

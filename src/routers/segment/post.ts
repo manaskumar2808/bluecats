@@ -11,6 +11,8 @@ import { SegmentType } from '../../constants/segment';
 import { Segment } from '../../models/segment';
 import { SegmentValidator } from '../../validators/segment';
 import { MediaPayload } from '../../types/segment/media-payload';
+import { TextPayload } from '../../types/segment/text-payload';
+import { CodePayload } from '../../types/segment/code-payload';
 
 const Route = express.Router();
 
@@ -18,20 +20,23 @@ const unlink = util.promisify(fs.unlink);
 
 Route.post('/api/segment/', authMiddlware, requireAuth, SegmentValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id, payload, type = SegmentType.TEXT } = req?.body || {};
+        const { id, text, url: mediaUrl, mediaType, caption, code, language, type = SegmentType.TEXT } = req?.body || {};
 
         let segment;
         
         if(id)
             segment = await Segment.findById(id);
 
-
         switch(type) {
             case SegmentType.TEXT:
+                const textPayload: TextPayload = {
+                    text,
+                }
+
                 if(segment)
-                    segment.set({ payload, type });
+                    segment.set({ payload: textPayload });
                 else
-                    segment = Segment.build({ payload, type });
+                    segment = Segment.build({ payload: textPayload, type });
 
                 await segment.save();
 
@@ -49,27 +54,33 @@ Route.post('/api/segment/', authMiddlware, requireAuth, SegmentValidator, valida
                     await unlink(file.path);
                 }
         
-                const url = cdnUrl || payload?.url;
-                const modifiedPayload: MediaPayload = {
+                const url = cdnUrl || mediaUrl;
+                const mediaPayload: MediaPayload = {
                     cdn,
-                    caption: payload?.caption,
+                    caption,
                     url,
+                    mediaType,
                 };
 
                 if(segment)
-                    segment.set({ payload: modifiedPayload, type });
+                    segment.set({ payload: mediaPayload });
                 else
-                    segment = Segment.build({ payload: modifiedPayload, type });
+                    segment = Segment.build({ payload: mediaPayload, type });
 
                 await segment.save();
 
                 (segment.payload as MediaPayload).url = getModifiedImageURL((segment?.payload as MediaPayload)?.url);
                 break;
             case SegmentType.CODE:
+                const codePayload: CodePayload = {
+                    code, 
+                    language,
+                }
+
                 if(segment)
-                    segment.set({ payload, type });
+                    segment.set({ payload: codePayload });
                 else
-                    segment = Segment.build({ payload, type });
+                    segment = Segment.build({ payload: codePayload, type });
 
                 await segment.save();    
                 break;

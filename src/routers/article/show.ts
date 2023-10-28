@@ -37,7 +37,7 @@ Route.get('/api/draft/:id', authMiddlware, requireAuth, async (req: Request, res
     try {
         const id = req?.params?.id;
 
-        let article = await Article.findById(id).populate('author').populate('segment');
+        let article = await Article.findById(id).populate('author').populate('segments');
 
         if(!article)
             throw new ArticleNotFoundException();
