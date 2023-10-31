@@ -20,7 +20,7 @@ const unlink = util.promisify(fs.unlink);
 
 Route.post('/api/segment/', authMiddlware, requireAuth, SegmentValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id, text, url: mediaUrl, mediaType, caption, code, language, type = SegmentType.TEXT } = req?.body || {};
+        const { id, text, url: mediaUrl, mediaType, caption, code, language, theme, type = SegmentType.TEXT } = req?.body || {};
 
         let segment;
         
@@ -75,6 +75,7 @@ Route.post('/api/segment/', authMiddlware, requireAuth, SegmentValidator, valida
                 const codePayload: CodePayload = {
                     code, 
                     language,
+                    theme,
                 }
 
                 if(segment)
